@@ -6,30 +6,60 @@
 namespace esrocos {
   namespace transformer{
 
-    template<unsigned int numberOfFrames = 20, unsigned int stringSize = 20>
+    template <unsigned int numberOfFrames = 20, unsigned int stringSize = 20> class AcyclicTransformer;
+
+    template<unsigned int numberOfFrames, unsigned int stringSize>
     class AcyclicTransformer{
 
-      public:
+    public:
+    class Frame;
+    class Transformation;
+
+
+    public:
 
       class Transformation{
 
+        friend class Frame;
+        friend class AcyclicTransformer<numberOfFrames, stringSize>;
+
       public:
-
-        char id[stringSize];
-
-        char a[stringSize];
-        char b[stringSize];
+        // +1 for null terminator
+        char id_[stringSize+1];
+        char a_[stringSize+1];
+        char b_[stringSize+1];
 
         Eigen::Matrix<double,4,4> atob;
         Eigen::Matrix<double,4,4> btoa;
 
+        Transformation(const char * a, const char * b, const char * id){
+          if (std::strlen(a) > stringSize || std::strlen(b) > stringSize || std::strlen(id) > stringSize)
+          {
+            std::strcpy(id_,"invalid");
+            return;
+          }
+
+          std::strcpy(a_,a);
+          std::strcpy(b_,b);
+          std::strcpy(id_,id);
+        }
+
       private:
+        Transformation(){}
       };
 
       class Frame {
+        friend class AcyclicTransformer<numberOfFrames, stringSize>;
+
       public:
-        char id[stringSize];
+        Frame(const char * id){
+          if (std::strlen(id) > stringSize) return;
+        }
+        // +1 for null terminator
+        char id_[stringSize+1];
         Transformation transformToParent;
+      private:
+        Frame(){}
       };
 
 
