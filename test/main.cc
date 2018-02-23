@@ -15,11 +15,10 @@ m1 << 1, 0, 0, 1,
       0, 0, 1, 1,
       0, 0, 0, 1;
 
-odom.atob = m1;
-odom.btoa = m1.inverse();
+odom.atob(m1);
 base_link.transformToParent = odom;
 
-std::cout << "odom: " << odom.a_ << " to " << odom.b_ << "\n" << odom.atob << "\n" << odom.b_ << " to " << odom.a_ << "\n" << odom.btoa << "\n" << std::endl;
+std::cout << "odom: " << odom.a() << " to " << odom.b() << "\n" << odom.atob() << "\n" << odom.b() << " to " << odom.a() << "\n" << odom.btoa() << "\n" << std::endl;
 
 atf::Frame lidar_1("lidar_1");
 atf::Transformation link_1("lidar_1", "base_link", "link_1");
@@ -29,10 +28,9 @@ m2 << 1, 0, 0, 2,
       0, 0, 1, 2,
       0, 0, 0, 1;
 
-link_1.atob = m2;
-link_1.btoa = m2.inverse();
+link_1.atob(m2);
 
-std::cout << "link_1: " << link_1.a_ << " to " << link_1.b_ << "\n" << link_1.atob << "\n" << link_1.b_ << " to " << link_1.a_ << "\n" << link_1.btoa << "\n" << std::endl;
+std::cout << "link_1: " << link_1.a() << " to " << link_1.b() << "\n" << link_1.atob() << "\n" << link_1.b() << " to " << link_1.a() << "\n" << link_1.btoa() << "\n" << std::endl;
 
 lidar_1.transformToParent = link_1;
 

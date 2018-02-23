@@ -12,43 +12,84 @@ namespace esrocos {
 
     template<unsigned int numberOfFrames = 20, unsigned int stringSize = 20>
     class AcyclicTransformer{
-
     public:
+
+      class Frame;
+
       class Transformation{
 
       public:
-        // +1 for null terminator
-        char id_[stringSize+1];
-        char a_[stringSize+1];
-        char b_[stringSize+1];
 
-        Eigen::Matrix4f atob;
-        Eigen::Matrix4f btoa;
+        Transformation(Frame from,Frame to, const char * id){
+          if (std::strlen(id) > stringSize)
+          {
+            std::strcpy(id_,"");
+            return;
+          }
+
+          std::strcpy(a_,from.id_);
+          std::strcpy(b_,to.id_);
+          std::strcpy(id_,id);
+
+          atob_ = identity;
+          btoa_ = identity;
+        }
 
         Transformation(const char * a, const char * b, const char * id){
           if (std::strlen(a) > stringSize || std::strlen(b) > stringSize || std::strlen(id) > stringSize)
           {
-            std::strcpy(id_,"invalid");
+            std::strcpy(id_,"");
             return;
           }
 
           std::strcpy(a_,a);
           std::strcpy(b_,b);
           std::strcpy(id_,id);
+
+          atob_ = identity;
+          btoa_ = identity;
         }
 
-        Transformation(){}
+        Transformation():id_(""),a_(""),b_(""){
+          atob_ = identity;
+          btoa_ = identity;
+        }
+
+        const char * id(){return id_;}
+        const char * a() {return a_;}
+        const char * b() {return b_;}
+
+        Eigen::Matrix4f atob(){return atob_;}
+        Eigen::Matrix4f btoa(){return btoa_;}
+
+        void atob(Eigen::Matrix4f atob){atob_ = atob; btoa_ = atob.inverse();}
+        void btoa(Eigen::Matrix4f btoa){btoa_ = btoa; atob_ = btoa.inverse();}
+
+
+      private:
+
+        Eigen::Matrix4f atob_;
+        Eigen::Matrix4f btoa_;
+
+        // +1 for null terminator
+        char id_[stringSize+1];
+        char a_[stringSize+1];
+        char b_[stringSize+1];
       };
 
       class Frame {
 
       public:
-        Frame(const char * id){
-          if (std::strlen(id) > stringSize) return;
-          std::strcpy(id_,id);
+        Frame(const char * id):id_(""){
+          if (std::strlen(id) > stringSize){
+            //do nothing
+          } else {
+            std::strcpy(id_,id);
+          }
         }
         // +1 for null terminator
         char id_[stringSize+1];
+
         Transformation transformToParent;
 
         Frame():id_(""){
@@ -65,8 +106,8 @@ namespace esrocos {
 
         Frame f(rootName);
         Transformation t(rootName,rootName,"root");
-        t.atob = identity;
-        t.btoa = identity;
+        t.atob_ = identity;
+        t.btoa_ = identity;
 
         f.transformToParent = t;
         frames_[0] = f;
@@ -114,12 +155,12 @@ namespace esrocos {
 
             for(unsigned int i = 0; i < numberOfFrames-1;i++){
 
-              achain[acount] = a.transformToParent.atob;
+              achain[acount] = a.transformToParent.atob_;
               acount++;
               getFrame(a.transformToParent.b_,a);
               if(std::strcmp(a.id_,b.id_) == 0) break;
 
-              bchain[bcount] = b.transformToParent.btoa;
+              bchain[bcount] = b.transformToParent.btoa_;
               bcount++;
               getFrame(b.transformToParent.b_,b);
               if(std::strcmp(a.id_,b.id_) == 0) break;
