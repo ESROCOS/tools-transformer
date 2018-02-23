@@ -6,9 +6,6 @@
 using namespace esrocos::transformer;
 
 typedef AcyclicTransformer<> atf20_20;
-typedef AcyclicTransformer<> atf20_256;
-
-
 
 BOOST_AUTO_TEST_SUITE(transformation_tests)
 
@@ -16,12 +13,12 @@ BOOST_AUTO_TEST_CASE(transform_construction)
 {
   atf20_20::Transformation t;
 
-  BOOST_CHECK_EQUAL(0,std::strcmp(t.a_,""));
-  BOOST_CHECK_EQUAL(0,std::strcmp(t.b_,""));
-  BOOST_CHECK_EQUAL(0,std::strcmp(t.id_,""));
+  BOOST_CHECK_EQUAL(0,std::strcmp(t.a(),""));
+  BOOST_CHECK_EQUAL(0,std::strcmp(t.b(),""));
+  BOOST_CHECK_EQUAL(0,std::strcmp(t.id(),""));
 
-  BOOST_CHECK_EQUAL(true,identity.isApprox(t.atob_));
-  BOOST_CHECK_EQUAL(true,identity.isApprox(t.atob_));
+  BOOST_CHECK_EQUAL(true,identity.isApprox(t.atob()));
+  BOOST_CHECK_EQUAL(true,identity.isApprox(t.atob()));
 }
 
 BOOST_AUTO_TEST_CASE(transform_initialization)
@@ -32,13 +29,12 @@ BOOST_AUTO_TEST_CASE(transform_initialization)
 
  atf20_20::Transformation t(a,b,id);
 
- BOOST_CHECK_EQUAL(0,std::strcmp(t.a_,a));
- BOOST_CHECK_EQUAL(0,std::strcmp(t.b_,b));
- BOOST_CHECK_EQUAL(0,std::strcmp(t.id_,id));
+ BOOST_CHECK_EQUAL(0,std::strcmp(t.a(),a));
+ BOOST_CHECK_EQUAL(0,std::strcmp(t.b(),b));
+ BOOST_CHECK_EQUAL(0,std::strcmp(t.id(),id));
 
- BOOST_CHECK_EQUAL(true,identity.isApprox(t.atob_));
- BOOST_CHECK_EQUAL(true,identity.isApprox(t.atob_));
+ BOOST_CHECK_EQUAL(true,identity.isApprox(t.atob()));
+ BOOST_CHECK_EQUAL(true,identity.isApprox(t.atob()));
 }
-
 
 BOOST_AUTO_TEST_SUITE_END()

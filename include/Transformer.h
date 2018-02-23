@@ -16,7 +16,7 @@ namespace esrocos {
 
       class Frame;
 
-      class Transformation{
+      class Transformation {
 
       public:
 
@@ -65,7 +65,6 @@ namespace esrocos {
         void atob(Eigen::Matrix4f atob){atob_ = atob; btoa_ = atob.inverse();}
         void btoa(Eigen::Matrix4f btoa){btoa_ = btoa; atob_ = btoa.inverse();}
 
-
       private:
 
         Eigen::Matrix4f atob_;
@@ -81,12 +80,22 @@ namespace esrocos {
 
       public:
         Frame(const char * id):id_(""){
+          this->id(id);
+        }
+
+        const char * id(){
+          return id_;
+        }
+
+        bool id(const char * id){
           if (std::strlen(id) > stringSize){
-            //do nothing
+            return false;
           } else {
             std::strcpy(id_,id);
+            return true;
           }
         }
+
         // +1 for null terminator
         char id_[stringSize+1];
 
@@ -106,8 +115,8 @@ namespace esrocos {
 
         Frame f(rootName);
         Transformation t(rootName,rootName,"root");
-        t.atob_ = identity;
-        t.btoa_ = identity;
+        t.atob(identity);
+        t.btoa(identity);
 
         f.transformToParent = t;
         frames_[0] = f;
@@ -131,7 +140,7 @@ namespace esrocos {
         //std::cout << "get frame with id: " << id << std::endl;
         for(int i = 0; i < maxFrames_; i++){
           //std::cout << "check frame " << i << ": " << frames_[i].id_ << std::endl;
-          if (std::strcmp(id,frames_[i].id_) == 0) {
+          if (std::strcmp(id,frames_[i].id()) == 0) {
             f = frames_[i];
             return true;
           }
@@ -155,15 +164,15 @@ namespace esrocos {
 
             for(unsigned int i = 0; i < numberOfFrames-1;i++){
 
-              achain[acount] = a.transformToParent.atob_;
+              achain[acount] = a.transformToParent.atob();
               acount++;
-              getFrame(a.transformToParent.b_,a);
-              if(std::strcmp(a.id_,b.id_) == 0) break;
+              getFrame(a.transformToParent.b(),a);
+              if(std::strcmp(a.id(),b.id()) == 0) break;
 
-              bchain[bcount] = b.transformToParent.btoa_;
+              bchain[bcount] = b.transformToParent.btoa();
               bcount++;
-              getFrame(b.transformToParent.b_,b);
-              if(std::strcmp(a.id_,b.id_) == 0) break;
+              getFrame(b.transformToParent.b(),b);
+              if(std::strcmp(a.id(),b.id()) == 0) break;
             }
 
             Eigen::Matrix4f result = identity;
@@ -186,7 +195,7 @@ namespace esrocos {
 
       bool updateTransform(const char * id, Transformation t){
         for(int i = 0; i < maxFrames_-1; i++){
-          if (std::strcmp(id,transforms_[i].id) == 0) {
+          if (std::strcmp(id,transforms_[i].id()) == 0) {
             t = transforms_[i];
             return true;
           }
@@ -209,7 +218,7 @@ namespace esrocos {
 
       bool getTransform(const char * id, Transformation& t){
         for(int i = 0; i < maxTransforms_; i++){
-          if (std::strcmp(id,transforms_[i].id) == 0) {
+          if (std::strcmp(id,transforms_[i].id()) == 0) {
             t = transforms_[i];
             return true;
           }

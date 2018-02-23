@@ -47,6 +47,5 @@ tf.getTransform("world","lidar_1",t);
 std::cout << "template transform:\n" << (m2.inverse()*m1.inverse()) << std::endl;
 std::cout << "link_1 to world:\n" << t << std::endl;
 
-
 return 1;
 }

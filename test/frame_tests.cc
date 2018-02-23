@@ -4,7 +4,6 @@
 #include <boost/test/unit_test.hpp>
 
 typedef esrocos::transformer::AcyclicTransformer<> atf20_20;
-typedef esrocos::transformer::AcyclicTransformer<> atf20_256;
 
 BOOST_AUTO_TEST_SUITE(frame_tests)
 
