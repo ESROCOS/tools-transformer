@@ -121,18 +121,22 @@ namespace esrocos {
         f.transformToParent = t;
         frames_[0] = f;
         currentFrames_ = 1;
+        currentTransformations_ = 0;
 
         return;
       }
 
       bool addFrame(Frame f){
         if(currentFrames_ == maxFrames_) return false;
-
+        std::cout << "adding frame " << f.id() << std::endl;
         frames_[currentFrames_] = f;
         currentFrames_++;
 
+        std::cout << "add transformation " << f.transformToParent.id() << std::endl;
+
         addTransformation(f.transformToParent);
 
+        std::cout << "done adding frame" << f.id() << std::endl;
         return true;
       }
 
@@ -205,10 +209,14 @@ namespace esrocos {
 
     private:
 
-      AcyclicTransformer(){}
+      AcyclicTransformer():currentFrames_(0),currentTransformations_(0){}
 
       bool addTransformation(Transformation t){
+//        std::cout << "currently at " << currentTransformations_ << " of " << maxTransforms_ << "transformations" << std::endl;
+
         if(currentTransformations_ == maxTransforms_) return false;
+
+//        std::cout << "adding transformation " << t.id() << std::endl;
 
         transforms_[currentTransformations_] = t;
         currentTransformations_++;
