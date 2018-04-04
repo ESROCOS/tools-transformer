@@ -1,0 +1,24 @@
+language: cpp
+compiler: gcc
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-6 
+    
+before_install:
+  - sudo apt-get install libboost-all-dev
+  - sudo apt-get install libeigen3-dev
+
+
+
+script:
+  - mkdir build && cd build
+  - CXX=/usr/bin/g++-6 CC=/usr/bin/gcc-6 cmake ..
+  - make
+  - ./test/tests_bin
+  
+notifications:
+  - benjamin.kisliuk@dfki.de
