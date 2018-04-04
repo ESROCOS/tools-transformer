@@ -1,4 +1,8 @@
-pkg_search_module(Eigen3 REQUIRED eigen3)
+cmake_minimum_required(VERSION 3.1)
+INCLUDE (FindPkgConfig)
+
+pkg_search_module(EIGEN3 REQUIRED eigen3)
+
 include_directories(${EIGEN3_INCLUDE_DIR})
 add_definitions(${EIGEN3_DEFINITIONS})
 
