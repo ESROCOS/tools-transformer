@@ -50,17 +50,14 @@ namespace esrocos {
           btoa_ = identity;
         }
 
-        Transformation():id_(""),a_(""),b_(""){
-          atob_ = identity;
-          btoa_ = identity;
-        }
+        Transformation():atob_(identity),btoa_(identity),id_(""),a_(""),b_(""){ }
 
-        const char * id(){return id_;}
-        const char * a() {return a_;}
-        const char * b() {return b_;}
+        const char * id() const {return id_;}
+        const char * a() const {return a_;}
+        const char * b() const {return b_;}
 
-        Eigen::Matrix4f atob(){return atob_;}
-        Eigen::Matrix4f btoa(){return btoa_;}
+        const Eigen::Matrix4f atob() const {return atob_;}
+        const Eigen::Matrix4f btoa() const {return btoa_;}
 
         void atob(Eigen::Matrix4f atob){atob_ = atob; btoa_ = atob.inverse();}
         void btoa(Eigen::Matrix4f btoa){btoa_ = btoa; atob_ = btoa.inverse();}
@@ -83,7 +80,7 @@ namespace esrocos {
           this->id(id);
         }
 
-        const char * id(){
+        const char * id() const {
           return id_;
         }
 
@@ -101,8 +98,7 @@ namespace esrocos {
 
         Transformation transformToParent;
 
-        Frame():id_(""){
-        }
+        Frame():id_(""){}
       };
 
       int frames() const {return maxFrames_;}
@@ -128,15 +124,15 @@ namespace esrocos {
 
       bool addFrame(Frame f){
         if(currentFrames_ == maxFrames_) return false;
-        std::cout << "adding frame " << f.id() << std::endl;
+        // std::cout << "adding frame " << f.id() << std::endl;
         frames_[currentFrames_] = f;
         currentFrames_++;
 
-        std::cout << "add transformation " << f.transformToParent.id() << std::endl;
+        // std::cout << "add transformation " << f.transformToParent.id() << std::endl;
 
         addTransformation(f.transformToParent);
 
-        std::cout << "done adding frame" << f.id() << std::endl;
+        // std::cout << "done adding frame" << f.id() << std::endl;
         return true;
       }
 
@@ -212,12 +208,8 @@ namespace esrocos {
       AcyclicTransformer():currentFrames_(0),currentTransformations_(0){}
 
       bool addTransformation(Transformation t){
-//        std::cout << "currently at " << currentTransformations_ << " of " << maxTransforms_ << "transformations" << std::endl;
 
         if(currentTransformations_ == maxTransforms_) return false;
-
-//        std::cout << "adding transformation " << t.id() << std::endl;
-
         transforms_[currentTransformations_] = t;
         currentTransformations_++;
 
