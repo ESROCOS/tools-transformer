@@ -18,3 +18,7 @@ add_subdirectory(src)
 
 enable_testing()
 add_subdirectory(test)
+
+install(FILES ${PROJECT_SOURCE_DIR}/include/Transformer.h
+	DESTINATION ${CMAKE_INSTALL_PREFIX}/include/tools/transformer)
+
