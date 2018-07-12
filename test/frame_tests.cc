@@ -1,6 +1,5 @@
 #include <iostream>
 #include <Transformer.h>
-
 #include <boost/test/unit_test.hpp>
 
 typedef esrocos::transformer::AcyclicTransformer<> atf20_20;

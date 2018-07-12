@@ -20,7 +20,7 @@ namespace esrocos {
 
       public:
 
-        Transformation(Frame from,Frame to, const char * id){
+        Transformation(Frame from, Frame to, const char * id){
           if (std::strlen(id) > stringSize)
           {
             std::strcpy(id_,"");
@@ -35,6 +35,7 @@ namespace esrocos {
           btoa_ = identity;
         }
 
+        [[deprecated]]
         Transformation(const char * a, const char * b, const char * id){
           if (std::strlen(a) > stringSize || std::strlen(b) > stringSize || std::strlen(id) > stringSize)
           {
@@ -104,7 +105,23 @@ namespace esrocos {
       int frames() const {return maxFrames_;}
 
       int ssize() const {return maxStringSize_;}
+      
+      AcyclicTransformer(Frame& root){
+        if(currentFrames_ >= maxFrames_) return;
+        
+        Transformation t(root,root,"root");
+        t.atob(identity);
+        t.btoa(identity);
 
+        root.transformToParent = t;
+        frames_[0] = root;
+        currentFrames_ = 1;
+        currentTransformations_ = 0;
+
+        return;
+      }
+
+      [[deprecated]]
       AcyclicTransformer(const char * rootName){
         if(currentFrames_ == maxFrames_) return;
         if(std::strlen(rootName) > stringSize) return;
@@ -136,7 +153,7 @@ namespace esrocos {
         return true;
       }
 
-      bool getFrame(const char * id, Frame & f){
+      bool getFrame(const char * id, Frame& f){
         //std::cout << "get frame with id: " << id << std::endl;
         for(int i = 0; i < maxFrames_; i++){
           //std::cout << "check frame " << i << ": " << frames_[i].id_ << std::endl;
