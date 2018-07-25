@@ -210,10 +210,10 @@ namespace esrocos {
         return false;
       }
 
-      bool updateTransform(const char * id, Transformation t){
+      bool updateTransform(const char * id, Eigen::Matrix4f t){
         for(int i = 0; i < maxFrames_-1; i++){
           if (std::strcmp(id,transforms_[i].id()) == 0) {
-            t = transforms_[i];
+            transforms_[i].atob(t);
             return true;
           }
         }
