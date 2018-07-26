@@ -1,0 +1,12 @@
+prefix=/root/esrocos_workspace/install
+exec_prefix=/root/esrocos_workspace/install
+libdir=${prefix}/lib
+includedir=${prefix}/include/tools/transformer
+
+Name: tools-transformer
+Description: 
+Version: 0.1
+Requires:  eigen3
+Libs: 
+Cflags: -I${includedir}
+
