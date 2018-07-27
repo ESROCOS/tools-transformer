@@ -22,5 +22,5 @@ add_subdirectory(test)
 install(FILES ${PROJECT_SOURCE_DIR}/include/Transformer.h
 	DESTINATION ${CMAKE_INSTALL_PREFIX}/include/tools/transformer)
 
-install(FILES ${PROJECT_SOURCE_DIR}/include/tools-transformer.pc
+install(FILES ${PROJECT_SOURCE_DIR}/tools-transformer.pc
 	DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)
