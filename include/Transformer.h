@@ -7,8 +7,8 @@
 namespace esrocos {
   namespace transformer{
 
-    static Eigen::Matrix4f identity = Eigen::Matrix4f::Identity();
-    static Eigen::Matrix4f zeros = Eigen::Matrix4f::Zero();
+    static Eigen::Matrix4d identity = Eigen::Matrix4d::Identity();
+    static Eigen::Matrix4d zeros = Eigen::Matrix4d::Zero();
 
     template<unsigned int numberOfFrames = 20, unsigned int stringSize = 20>
     class AcyclicTransformer{
@@ -57,16 +57,16 @@ namespace esrocos {
         const char * a() const {return a_;}
         const char * b() const {return b_;}
 
-        const Eigen::Matrix4f atob() const {return atob_;}
-        const Eigen::Matrix4f btoa() const {return btoa_;}
+        const Eigen::Matrix4d atob() const {return atob_;}
+        const Eigen::Matrix4d btoa() const {return btoa_;}
 
-        void atob(Eigen::Matrix4f atob){atob_ = atob; btoa_ = atob.inverse();}
-        void btoa(Eigen::Matrix4f btoa){btoa_ = btoa; atob_ = btoa.inverse();}
+        void atob(Eigen::Matrix4d atob){atob_ = atob; btoa_ = atob.inverse();}
+        void btoa(Eigen::Matrix4d btoa){btoa_ = btoa; atob_ = btoa.inverse();}
 
       private:
 
-        Eigen::Matrix4f atob_;
-        Eigen::Matrix4f btoa_;
+        Eigen::Matrix4d atob_;
+        Eigen::Matrix4d btoa_;
 
         // +1 for null terminator
         char id_[stringSize+1];
@@ -107,23 +107,22 @@ namespace esrocos {
       int ssize() const {return maxStringSize_;}
       
       AcyclicTransformer(Frame& root){
-        if(currentFrames_ >= maxFrames_) return;
+        currentFrames_ = 1;
+        currentTransformations_ = 0;
+
+        if(0 >= maxFrames_) return;
         
-        Transformation t(root,root,"root");
+	Transformation t(root,root,"root");
         t.atob(identity);
         t.btoa(identity);
 
         root.transformToParent = t;
         frames_[0] = root;
-        currentFrames_ = 1;
-        currentTransformations_ = 0;
-
         return;
       }
 
-      [[deprecated]]
       AcyclicTransformer(const char * rootName){
-        if(currentFrames_ == maxFrames_) return;
+        if(0 >= maxFrames_) return;
         if(std::strlen(rootName) > stringSize) return;
 
         Frame f(rootName);
@@ -135,38 +134,33 @@ namespace esrocos {
         frames_[0] = f;
         currentFrames_ = 1;
         currentTransformations_ = 0;
-
         return;
       }
 
       bool addFrame(Frame f){
         if(currentFrames_ == maxFrames_) return false;
-        // std::cout << "adding frame " << f.id() << std::endl;
         frames_[currentFrames_] = f;
-        currentFrames_++;
 
-        // std::cout << "add transformation " << f.transformToParent.id() << std::endl;
+        addTransformation(&(frames_[currentFrames_].transformToParent));
+			
+	currentFrames_++;
 
-        addTransformation(f.transformToParent);
-
-        // std::cout << "done adding frame" << f.id() << std::endl;
         return true;
       }
 
       bool getFrame(const char * id, Frame& f){
-        //std::cout << "get frame with id: " << id << std::endl;
         for(int i = 0; i < maxFrames_; i++){
-          //std::cout << "check frame " << i << ": " << frames_[i].id_ << std::endl;
           if (std::strcmp(id,frames_[i].id()) == 0) {
             f = frames_[i];
-            return true;
+	    return true;
           }
         }
         return false;
       }
 
-      bool getTransform(const char * frame_a, const char * frame_b, Eigen::Matrix4f& t){
+      bool getTransform(const char * frame_a, const char * frame_b, Eigen::Matrix4d& t){
         Frame a,b;
+
         if(getFrame(frame_a,a) && getFrame(frame_b,b)){
           if(std::strcmp(frame_a,frame_b) == 0) {
             t = identity;
@@ -174,25 +168,33 @@ namespace esrocos {
           }
           else {
 
-            Eigen::Matrix4f achain[currentFrames_-1];
-            Eigen::Matrix4f bchain[currentFrames_-1];
+            Eigen::Matrix4d achain[currentFrames_-1];
+            Eigen::Matrix4d bchain[currentFrames_-1];
 
             int acount = 0, bcount = 0;
 
             for(unsigned int i = 0; i < numberOfFrames-1;i++){
-
               achain[acount] = a.transformToParent.atob();
               acount++;
-              getFrame(a.transformToParent.b(),a);
-              if(std::strcmp(a.id(),b.id()) == 0) break;
+
+	      getFrame(a.transformToParent.b(),a);
+            
+             
+	      if(std::strcmp(a.id(),b.id()) == 0){
+		break;
+	      } 
 
               bchain[bcount] = b.transformToParent.btoa();
               bcount++;
               getFrame(b.transformToParent.b(),b);
-              if(std::strcmp(a.id(),b.id()) == 0) break;
+
+	      if(std::strcmp(a.id(),b.id()) == 0){ 
+                break;
+	      } 
             }
 
-            Eigen::Matrix4f result = identity;
+            Eigen::Matrix4d result = identity;
+ 
 
             for(int i = 0; i < acount; i++){
               result = result * achain[i];
@@ -210,37 +212,52 @@ namespace esrocos {
         return false;
       }
 
-      bool updateTransform(const char * id, Eigen::Matrix4f t){
+      bool updateTransform(const char * id, Eigen::Matrix4d t){
         for(int i = 0; i < maxFrames_-1; i++){
-          if (std::strcmp(id,transforms_[i].id()) == 0) {
-            transforms_[i].atob(t);
+          if (std::strcmp(id,transforms_[i]->id()) == 0) {
+            transforms_[i]->atob(t);
+            return true;
+          } else {
+	  }
+	  
+        }
+        return false;
+      }
+
+      bool getTransform(const char * id, Transformation& t){
+        for(int i = 0; i < maxTransforms_; i++){
+          if (std::strcmp(id,transforms_[i]->id()) == 0) {
+            t = *(transforms_[i]);
             return true;
           }
         }
         return false;
       }
 
+    void printAdresses(){
+    std::cout << "addresses in transforms:" << std::endl;
+      for (int i = 0; i < maxTransforms_; i++){
+        std::cout << transforms_[i]->id() <<": " << transforms_[i] << std::endl;
+      }
+
+      for (int i = 0; i < maxFrames_; i++){
+        std::cout << frames_[i].id() << ": " << &frames_[i] << std::endl;
+	std::cout << "\t" << frames_[i].transformToParent.id() << ": " << &(frames_[i].transformToParent) << std::endl;
+      }  
+    }
+
     private:
 
-      AcyclicTransformer():currentFrames_(0),currentTransformations_(0){}
+      AcyclicTransformer():currentFrames_(0),currentTransformations_(0){
+      }
 
-      bool addTransformation(Transformation t){
+      bool addTransformation(Transformation * t){
 
         if(currentTransformations_ == maxTransforms_) return false;
         transforms_[currentTransformations_] = t;
         currentTransformations_++;
 
         return true;
-      }
-
-      bool getTransform(const char * id, Transformation& t){
-        for(int i = 0; i < maxTransforms_; i++){
-          if (std::strcmp(id,transforms_[i].id()) == 0) {
-            t = transforms_[i];
-            return true;
-          }
-        }
-        return false;
       }
 
       int currentFrames_;
@@ -251,7 +268,7 @@ namespace esrocos {
       static const int maxStringSize_ = stringSize;
 
       Frame frames_[numberOfFrames];
-      Transformation transforms_[numberOfFrames-1];
+      Transformation * transforms_[numberOfFrames-1];
     };
   }
 }
