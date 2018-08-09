@@ -9,7 +9,7 @@ atf tf("world");
 
 atf::Frame base_link("base_link");
 atf::Transformation odom("base_link","world","odometry");
-Eigen::Matrix4f m1;
+Eigen::Matrix4d m1;
 m1 << 1, 0, 0, 1,
       0, 1, 0, 1,
       0, 0, 1, 1,
@@ -22,7 +22,7 @@ std::cout << "odom: " << odom.a() << " to " << odom.b() << "\n" << odom.atob() <
 
 atf::Frame lidar_1("lidar_1");
 atf::Transformation link_1("lidar_1", "base_link", "link_1");
-Eigen::Matrix4f m2;
+Eigen::Matrix4d m2;
 m2 << 1, 0, 0, 2,
       0, 1, 0, 2,
       0, 0, 1, 2,
@@ -37,7 +37,7 @@ lidar_1.transformToParent = link_1;
 tf.addFrame(base_link);
 tf.addFrame(lidar_1);
 
-Eigen::Matrix4f t;
+Eigen::Matrix4d t;
 
 tf.getTransform("lidar_1","world",t);
 std::cout << "template transform:\n" << (m2*m1) << std::endl;

@@ -27,9 +27,9 @@ The following tree is modelled for testing.
 */
 
 struct Matrices{
-  Eigen::Matrix4f m0;
-  Eigen::Matrix4f m1;
-  Eigen::Matrix4f m2;
+  Eigen::Matrix4d m0;
+  Eigen::Matrix4d m1;
+  Eigen::Matrix4d m2;
 
   Matrices(){
     m0 << 1, 0,   0,   2,
@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(transformer_add_frames)
   tf.addFrame(fs.lidar_1);
   tf.addFrame(fs.camera_1);
 
-  Eigen::Matrix4f t;
+  Eigen::Matrix4d t;
   bool approx;
 
   tf.getTransform("lidar_1","world",t);

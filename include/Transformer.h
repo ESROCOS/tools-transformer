@@ -35,7 +35,6 @@ namespace esrocos {
           btoa_ = identity;
         }
 
-        [[deprecated]]
         Transformation(const char * a, const char * b, const char * id){
           if (std::strlen(a) > stringSize || std::strlen(b) > stringSize || std::strlen(id) > stringSize)
           {
