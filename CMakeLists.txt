@@ -10,6 +10,10 @@ set(CMAKE_CXX_FLAGS)
 
 add_definitions(-Wall -Wno-unknown-pragmas)
 
+find_package(Eigen3 REQUIRED NO_MODULE)
+
+include_directories (${EIGEN3_INCLUDE_DIR})
+
 option(COVERAGE "Enable code coverage. run 'make test && make coverage' to generate the coverage report. The report will be in ${CMAKE_BINARY_DIR}/cov" OFF)
 
 if(COVERAGE)

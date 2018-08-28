@@ -1,7 +1,7 @@
 #ifndef _TRANSFORMER_H_
 #define _TRANSFORMER_H_
 
-#include<eigen3/Eigen/Dense>
+#include<Eigen/Dense>
 #include <iostream>
 
 namespace esrocos {
