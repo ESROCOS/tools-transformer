@@ -1,5 +1,5 @@
-prefix=$HOME/esrocos_workspace/install
-exec_prefix=$HOME/esrocos_workspace/install
+prefix=@PROJECT_SOURCE_DIR@/install
+exec_prefix=@PROJECT_SOURCE_DIR@/install
 libdir=${prefix}/lib
 includedir=${prefix}/include/tools/transformer
 
