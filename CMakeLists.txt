@@ -10,10 +10,9 @@ set(CMAKE_CXX_FLAGS)
 
 add_definitions(-Wall -Wno-unknown-pragmas)
 
-find_package(Eigen3 REQUIRED eigen3)
-include_directories (${EIGEN3_INCLUDE_DIR})
-
 option(COVERAGE "Enable code coverage. run 'make test && make coverage' to generate the coverage report. The report will be in ${CMAKE_BINARY_DIR}/cov" OFF)
+
+find_package (Eigen3 REQUIRED NO_MODULE)
 
 if(COVERAGE)
   if(CMAKE_BUILD_TYPE MATCHES Debug)
@@ -34,18 +33,23 @@ if(COVERAGE)
 endif()
 
 
-include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories (${PROJECT_SOURCE_DIR}/include)
+include_directories (${EIGEN3_INCLUDE_DIR})
 
-add_subdirectory(src)
+enable_testing ()
+add_subdirectory (test)
 
-enable_testing()
-add_subdirectory(test)
-
-install(FILES ${PROJECT_SOURCE_DIR}/include/Transformer.h
-	DESTINATION ${CMAKE_INSTALL_PREFIX}/include/tools/transformer)
+set(prefix ${PROJECT_SOURCE_DIR}/install)
+set(exec_prefix ${PROJECT_SOURCE_DIR}/install)
+set(libdir ${prefix}/lib)
+set(includedir ${prefix}/include/tools/transformer)
 
 configure_file(${PROJECT_SOURCE_DIR}/tools-transformer.pc.in
 	       ${PROJECT_SOURCE_DIR}/tools-transformer.pc)
 
+
+install(FILES ${PROJECT_SOURCE_DIR}/include/Transformer.h 
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/include/tools/transformer)
+
 install(FILES ${PROJECT_SOURCE_DIR}/tools-transformer.pc
-	DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)
+	      DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)

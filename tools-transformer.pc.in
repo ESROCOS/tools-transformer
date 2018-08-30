@@ -1,12 +1,7 @@
-prefix=@PROJECT_SOURCE_DIR@/install
-exec_prefix=@PROJECT_SOURCE_DIR@/install
-libdir=${prefix}/lib
-includedir=${prefix}/include/tools/transformer
-
 Name: tools-transformer
 Description: 
 Version: 0.1
 Requires:  eigen3
 Libs: 
-Cflags: -I${includedir}
+Cflags: -I@includedir@
 
