@@ -39,7 +39,7 @@ include_directories (${EIGEN3_INCLUDE_DIR})
 enable_testing ()
 add_subdirectory (test)
 
-set(prefix ${PROJECT_SOURCE_DIR}/install)
+set(prefix ${CMAKE_INSTALL_PREFIX})
 set(exec_prefix ${PROJECT_SOURCE_DIR}/install)
 set(libdir ${prefix}/lib)
 set(includedir ${prefix}/include/tools/transformer)
